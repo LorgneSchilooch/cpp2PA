@@ -1,6 +1,6 @@
 Ajouter sur l'IDE le plugin ignore qui prendra en charge le fichier .gitignore
 
-Les fichiers cachés OSX/WINDOWS sont ingorés, ainsi que celui de l'IDE CLion
+Les fichiers cachés OSX/WINDOWS sont ingorés, ainsi que celui de l'IDE CLion.
 
 itou pour les fichiers c++
 
