@@ -15,22 +15,18 @@ void deleteLinearModel(double *w) {
 }
 
 
-void trainLinearModel(double *w, double x[], double y[], double result[], double alpha, int len, bool rosenblatt) {
+void trainLinearModel(double *w, double x[], double y[], double result[], double param[], int len, bool rosenblatt) {
 
     MatrixXd xMat(len, 3);
+    MatrixXd resultMat(len, 1);
     for (int i = 0; i < len; i++) {
         xMat.row(i).col(0) << 1;
         xMat.row(i).col(1) << x[i];
         xMat.row(i).col(2) << y[i];
-    }
-
-    MatrixXd resultMat(len, 1);
-
-    for (int i = 0; i < len; i++) {
         resultMat.row(i).col(0) << result[i];
     }
 
-    dllTrainLinearModel(w, xMat, resultMat, alpha, rosenblatt);
+    dllTrainLinearModel(w, xMat, resultMat, param, rosenblatt);
 }
 
 int predictLinearModel(double *w, double x, double y) {
@@ -52,36 +48,45 @@ int predictLinearModel(double *w, double x, double y) {
 // ######################### Fonctions internes #########################
 
 
-void dllTrainLinearModel(double *w, MatrixXd x, MatrixXd result, double alpha, bool choice) {
+void dllTrainLinearModel(double *w, MatrixXd x, MatrixXd result, double param[], bool choice) {
 
     VectorXd wResult(3);
-    wResult(0) = 1;
-    wResult(1) = 1;
-    wResult(2) = 1;
-    wResult << dllLearningLinearModel(wResult, x, result, alpha, choice);
+    wResult(0) = param[2];
+    wResult(1) = -0.7; // A mettre en random
+    wResult(2) = 0.2; // A mettre en random
+    wResult << dllLearningLinearModel(wResult, x, result, param, choice);
     w[0] = wResult(0);
     w[1] = wResult(1);
     w[2] = wResult(2);
 }
 
-MatrixXd dllLearningLinearModel(VectorXd w, MatrixXd x, MatrixXd result, double alpha, bool choice) {
+MatrixXd dllLearningLinearModel(VectorXd w, MatrixXd x, MatrixXd result, double param[], bool choice) {
 
     VectorXd xt(x.cols());
-    for (int i = 0; i < x.rows(); i++) {
-        xt = x.row(i);
-        if (!choice) {
-            while (dllPredictLinearModel(xt, w) != result.coeff(i, 0)) {
-                w(0) = w(0) + alpha * result.coeff(i, 0) * xt(0);
-                w(1) = w(1) + alpha * result.coeff(i, 0) * xt(1);
-                w(2) = w(2) + alpha * result.coeff(i, 0) * xt(2);
+    bool verif = true;
+    bool verif1 = false;
+    int max = 0;
+    while (verif) {
+        for (int i = 0; i < x.rows(); i++) {
+            xt = x.row(i);
+            if (dllPredictLinearModel(w, xt) != result.coeff(i, 0)) {
+                if (choice) {
+                    w(0) = w(0) + param[0] * (result.coeff(i, 0) - dllPredictLinearModel(w, xt)) * xt(0);
+                    w(1) = w(1) + param[0] * (result.coeff(i, 0) - dllPredictLinearModel(w, xt)) * xt(1);
+                    w(2) = w(2) + param[0] * (result.coeff(i, 0) - dllPredictLinearModel(w, xt)) * xt(2);
+                } else {
+                    w(0) = w(0) + param[0] * result.coeff(i, 0) * xt(0);
+                    w(1) = w(1) + param[0] * result.coeff(i, 0) * xt(1);
+                    w(2) = w(2) + param[0] * result.coeff(i, 0) * xt(2);
+                }
+                verif1 = true;
             }
-        } else {
-            w(0) = w(0) + alpha * (result.coeff(i, 0) - dllPredictLinearModel(xt, w)) * xt(0);
-            w(1) = w(1) + alpha * (result.coeff(i, 0) - dllPredictLinearModel(xt, w)) * xt(1);
-            w(2) = w(2) + alpha * (result.coeff(i, 0) - dllPredictLinearModel(xt, w)) * xt(2);
         }
+        verif = verif1;
+        verif1 = false;
+        max++;
+        if (max == param[1]) break;
     }
-
     return w;
 }
 
@@ -92,7 +97,7 @@ bool testAlgorithm(VectorXd w, VectorXd x, int result) {
 };
 
 int dllPredictLinearModel(VectorXd w, VectorXd x) {
-    return (w.transpose() * x).determinant() < 0 ? -1 : 1;
+    return (w(0) * x(0) + w(1) * x(1) + w(2) * x(2)) < 0 ? -1 : 1;
 };
 
 
