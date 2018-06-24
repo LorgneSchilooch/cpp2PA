@@ -30,4 +30,8 @@ void Neuron::setWeigth(double *weigth) {
     Neuron::weigth = weigth;
 }
 
+double Neuron::getOutput() const {
+    return output;
+}
+
 Neuron::Neuron() = default;

@@ -3,21 +3,25 @@
 //
 
 #include "linearPerceptron.h"
+#include <stdlib.h>
+#include <time.h>
 
 
-void dllTrainLinearModel(double *w, MatrixXd x, MatrixXd result, double param[], bool choice) {
-
-    VectorXd wResult(3);
+void dllTrainLinearModel(double *w, MatrixXd x, MatrixXd result, double param[]) {
+    double min = -1;
+    double max = 1;
+    VectorXd wResult((int)param[3] + 1);
     wResult(0) = param[2];
-    wResult(1) = -0.7; // A mettre en random
-    wResult(2) = 0.2; // A mettre en random
-    wResult << dllLearningLinearModel(wResult, x, result, param, choice);
-    w[0] = wResult(0);
-    w[1] = wResult(1);
-    w[2] = wResult(2);
+    for (int i = 1; i < (int)param[3] + 1; i++) {
+        wResult(i) = min + ((double)rand() / (double)RAND_MAX) * (max - min);
+    }
+    wResult << dllLearningLinearModel(wResult, x, result, param);
+    for (int i = 0; i < (int)param[3] + 1; i ++) {
+        w[i] = wResult(i);
+    }
 }
 
-MatrixXd dllLearningLinearModel(VectorXd w, MatrixXd x, MatrixXd result, double param[], bool choice) {
+MatrixXd dllLearningLinearModel(VectorXd w, MatrixXd x, MatrixXd result, double param[]) {
 
     VectorXd xt(x.cols());
     bool verif = true;
@@ -26,15 +30,15 @@ MatrixXd dllLearningLinearModel(VectorXd w, MatrixXd x, MatrixXd result, double 
     while (verif) {
         for (int i = 0; i < x.rows(); i++) {
             xt = x.row(i);
-            if (dllPredictLinearModel(w, xt) != result.coeff(i, 0)) {
-                if (choice) {
-                    w(0) = w(0) + param[0] * (result.coeff(i, 0) - dllPredictLinearModel(w, xt)) * xt(0);
-                    w(1) = w(1) + param[0] * (result.coeff(i, 0) - dllPredictLinearModel(w, xt)) * xt(1);
-                    w(2) = w(2) + param[0] * (result.coeff(i, 0) - dllPredictLinearModel(w, xt)) * xt(2);
+            if (dllPredictLinearModel(w, xt, param) != result.coeff(i, 0)) {
+                if (param[5] == 1) {
+                    for (int k = 0; k < (int)param[3] + 1; k++) {
+                        w(k) = w(k) + param[0] * (result.coeff(i, 0) - dllPredictLinearModel(w, xt, param)) * xt(k);
+                    }
                 } else {
-                    w(0) = w(0) + param[0] * result.coeff(i, 0) * xt(0);
-                    w(1) = w(1) + param[0] * result.coeff(i, 0) * xt(1);
-                    w(2) = w(2) + param[0] * result.coeff(i, 0) * xt(2);
+                    for (int k = 0; k < (int)param[3] + 1; k++) {
+                        w(k) = w(k) + param[0] * result.coeff(i, 0) * xt(k);
+                    }
                 }
                 verif1 = true;
             }
@@ -47,12 +51,16 @@ MatrixXd dllLearningLinearModel(VectorXd w, MatrixXd x, MatrixXd result, double 
     return w;
 }
 
-bool testAlgorithm(VectorXd w, VectorXd x, int result) {
+bool testAlgorithm(VectorXd w, VectorXd x, int result, double param[]) {
 
-    return dllPredictLinearModel(w, x) == result;
+    return dllPredictLinearModel(w, x, param) == result;
 
 };
 
-int dllPredictLinearModel(VectorXd w, VectorXd x) {
-    return (w(0) * x(0) + w(1) * x(1) + w(2) * x(2)) < 0 ? -1 : 1;
+int dllPredictLinearModel(VectorXd w, VectorXd x, double param[]) {
+    double tmp = 0.;
+    for (int i = 0; i < param[3] + 1; i++) {
+        tmp += (w(i) * x(i));
+    }
+    return (tmp < 0) ? -1 : 1;
 };

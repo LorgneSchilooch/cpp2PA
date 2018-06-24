@@ -28,7 +28,9 @@ public:
 
     double *weigth;
     double bias;
+    double output;
 
+    double getOutput() const;
 
 
 };

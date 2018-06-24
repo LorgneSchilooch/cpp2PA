@@ -1,15 +1,13 @@
 #include "library.h"
 #include "LinearPerceptron/linearPerceptron.h"
-#include "MLP/Neuron.h"
-#include "MLP/MLP.h"
 #include <iostream>
 #include <cmath>
 #include <vector>
 
 extern "C" {
 
-double *createLinearModel() {
-    double *w = new double[3];
+double *createLinearModel(int size) {
+    double *w = new double[size];
     return w;
 }
 
@@ -18,75 +16,39 @@ void deleteLinearModel(double *w) {
 }
 
 
-void trainLinearModel(double *w, double x[], double y[], double result[], double param[], int len, bool rosenblatt) {
+void trainLinearModel(double *w, double input[], double result[], double param[]) {
 
-    MatrixXd xMat(len, 3);
-    MatrixXd resultMat(len, 1);
-    for (int i = 0; i < len; i++) {
+    MatrixXd xMat((int)param[6], (int)param[3] + 1);
+    MatrixXd resultMat((int)param[6], 1);
+    int tmp = 0;
+    for (int i = 0; i < (int)param[6]; i++) {
         xMat.row(i).col(0) << 1;
-        xMat.row(i).col(1) << x[i];
-        xMat.row(i).col(2) << y[i];
+        for (int k = 0; k < (int)param[3]; k++) {
+            xMat.row(i).col(k + 1) << input[tmp +k];
+        }
         resultMat.row(i).col(0) << result[i];
+        tmp += (int)param[3];
+
     }
 
-    dllTrainLinearModel(w, xMat, resultMat, param, rosenblatt);
+    dllTrainLinearModel(w, xMat, resultMat, param);
 }
 
-int predictLinearModel(double *w, double x, double y) {
+int predictLinearModel(double *w, double input[], double param[]) {
 
-    VectorXd xp(3);
-    VectorXd wp(3);
+    VectorXd xp((int)param[3] + 1);
+    VectorXd wp((int)param[3] + 1);
     xp(0) = 1;
-    xp(1) = x;
-    xp(2) = y;
     wp(0) = w[0];
-    wp(1) = w[1];
-    wp(2) = w[2];
-    return dllPredictLinearModel(wp, xp);
-
-}
-
-Neuron **createMLPModel(int layer[], double param[], int layerLen, int paramLen) {
-    Neuron **neuronArrayByLayer = new Neuron*[layerLen];
-    for (int i = 0; i < layerLen; i++) {
-        neuronArrayByLayer[i] = new Neuron[layer[i]];
+    for (int i = 1; i < (int)param[3] +1; i ++) {
+        xp(i) = input[i - 1];
+        wp(i) = w[i];
     }
 
 
-
-return neuronArrayByLayer;
-}
-
-
-void deleteMLPModel(Neuron *neuronArrayByLayer) {
-    delete neuronArrayByLayer;
-}
-
-
-void trainMLPModel(Neuron **neuronArrayByLayer, std::vector<double> pt[], double result[], double param[], int layer[], int layerLen,  int len) {
-
-
-    dllTrainMLPModel(neuronArrayByLayer, pt[len], layer[layerLen], param[4]);
-}
-
-int predictMLPModel(double *w, double x, double y) {
-
-    VectorXd xp(3);
-    VectorXd wp(3);
-    xp(0) = 1;
-    xp(1) = x;
-    xp(2) = y;
-    wp(0) = w[0];
-    wp(1) = w[1];
-    wp(2) = w[2];
-    return dllPredictLinearModel(wp, xp);
+    return dllPredictLinearModel(wp, xp, param);
 
 }
 
 
-
 }
-
-
-
-

@@ -8,8 +8,8 @@
 #ifndef CPP2PA_MLP_H
 #define CPP2PA_MLP_H
 
-void dllTrainMLPModel(Neuron **neuronArrayByLayer, std::vector<double> pt[], double layer[], double param[]);
-
+void dllTrainMLPModel(Neuron **neuronArrayByLayer, std::vector<double> pt[], double layer[], int layerLen, double Result[], int len, double param[]);
+void dllSpiderMan(Neuron **neuronArrayByLayer, double layer[], int layerLen);
 
 
 #endif //CPP2PA_MLP_H
