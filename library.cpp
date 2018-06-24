@@ -1,12 +1,13 @@
 #include "library.h"
+#include "LinearPerceptron/linearPerceptron.h"
 #include <iostream>
 #include <cmath>
 #include <vector>
 
 extern "C" {
 
-double *createLinearModel() {
-    double *w = new double[3];
+double *createLinearModel(int size) {
+    double *w = new double[size];
     return w;
 }
 
@@ -15,84 +16,39 @@ void deleteLinearModel(double *w) {
 }
 
 
-void trainLinearModel(double *w, double x[], double y[], double result[], double alpha, int len, bool rosenblatt) {
+void trainLinearModel(double *w, double input[], double result[], double param[]) {
 
-    MatrixXd xMat(len, 3);
-    for (int i = 0; i < len; i++) {
+    MatrixXd xMat((int)param[6], (int)param[3] + 1);
+    MatrixXd resultMat((int)param[6], 1);
+    int tmp = 0;
+    for (int i = 0; i < (int)param[6]; i++) {
         xMat.row(i).col(0) << 1;
-        xMat.row(i).col(1) << x[i];
-        xMat.row(i).col(2) << y[i];
-    }
-
-    MatrixXd resultMat(len, 1);
-
-    for (int i = 0; i < len; i++) {
-        resultMat.row(i).col(0) << result[i];
-    }
-
-    dllTrainLinearModel(w, xMat, resultMat, alpha, rosenblatt);
-}
-
-int predictLinearModel(double *w, double x, double y) {
-
-    VectorXd xp(3);
-    VectorXd wp(3);
-    xp(0) = 1;
-    xp(1) = x;
-    xp(2) = y;
-    wp(0) = w[0];
-    wp(1) = w[1];
-    wp(2) = w[2];
-    return dllPredictLinearModel(wp, xp);
-
-}
-
-}
-
-// ######################### Fonctions internes #########################
-
-
-void dllTrainLinearModel(double *w, MatrixXd x, MatrixXd result, double alpha, bool choice) {
-
-    VectorXd wResult(3);
-    wResult(0) = 1;
-    wResult(1) = 1;
-    wResult(2) = 1;
-    wResult << dllLearningLinearModel(wResult, x, result, alpha, choice);
-    w[0] = wResult(0);
-    w[1] = wResult(1);
-    w[2] = wResult(2);
-}
-
-MatrixXd dllLearningLinearModel(VectorXd w, MatrixXd x, MatrixXd result, double alpha, bool choice) {
-
-    VectorXd xt(x.cols());
-    for (int i = 0; i < x.rows(); i++) {
-        xt = x.row(i);
-        if (!choice) {
-            while (dllPredictLinearModel(xt, w) != result.coeff(i, 0)) {
-                w(0) = w(0) + alpha * result.coeff(i, 0) * xt(0);
-                w(1) = w(1) + alpha * result.coeff(i, 0) * xt(1);
-                w(2) = w(2) + alpha * result.coeff(i, 0) * xt(2);
-            }
-        } else {
-            w(0) = w(0) + alpha * (result.coeff(i, 0) - dllPredictLinearModel(xt, w)) * xt(0);
-            w(1) = w(1) + alpha * (result.coeff(i, 0) - dllPredictLinearModel(xt, w)) * xt(1);
-            w(2) = w(2) + alpha * (result.coeff(i, 0) - dllPredictLinearModel(xt, w)) * xt(2);
+        for (int k = 0; k < (int)param[3]; k++) {
+            xMat.row(i).col(k + 1) << input[tmp +k];
         }
+        resultMat.row(i).col(0) << result[i];
+        tmp += (int)param[3];
+
     }
 
-    return w;
+    dllTrainLinearModel(w, xMat, resultMat, param);
 }
 
-bool testAlgorithm(VectorXd w, VectorXd x, int result) {
+int predictLinearModel(double *w, double input[], double param[]) {
 
-    return dllPredictLinearModel(w, x) == result;
+    VectorXd xp((int)param[3] + 1);
+    VectorXd wp((int)param[3] + 1);
+    xp(0) = 1;
+    wp(0) = w[0];
+    for (int i = 1; i < (int)param[3] +1; i ++) {
+        xp(i) = input[i - 1];
+        wp(i) = w[i];
+    }
 
-};
 
-int dllPredictLinearModel(VectorXd w, VectorXd x) {
-    return (w.transpose() * x).determinant() < 0 ? -1 : 1;
-};
+    return dllPredictLinearModel(wp, xp, param);
+
+}
 
 
+}

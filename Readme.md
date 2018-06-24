@@ -7,8 +7,17 @@ itou pour les fichiers c++
 Mon CMake :
 
 cmake_minimum_required(VERSION 3.10)
+
 project(cpp2PA)
 
 set(CMAKE_CXX_STANDARD 11)
 
 add_library(cpp2PA SHARED library.cpp library.h)
+
+
+Classification : OK
+Rég Linéaire : NOK
+
+Log : NOK
+
+
