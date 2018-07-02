@@ -14,6 +14,6 @@ using namespace std;
 void dllTrainMlpModel(double ***, double **, double **, int[], int, double[]);
 
 
-double dllPredictMlp(double***, double**, int[], int, double[]);
+int dllPredictMlp(double***, double**, int[], int, double[]);
 
 #endif //CPP2PA_MULTILAYERPERCEPTRON_H

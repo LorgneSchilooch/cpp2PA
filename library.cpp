@@ -57,23 +57,27 @@ int predictLinearModel(double *w, double input[], double param[]) {
 
 ////////////////////// MLP
 
-double ***createMlpModel(int maxHeight, int width) {
+double ***createMlpModel(int couche[], int width) {
     double ***w;
-    w = new double **[width];
-    for (int x = 0; x < width; x++) {
-        w[x] = new double *[maxHeight + 1];
-        for (int y = 0; y < maxHeight + 1; y++) {
-            w[x][y] = new double[maxHeight + 1];
-            for (int z = 0; z < maxHeight + 1; z++) {
-                w[x][y][z] = (rand() / (RAND_MAX / (2.0))) - 1.0;
+    w = new double **[width - 1];
+    for (int layer = 0; layer < width - 1; layer++) {
+        w[layer] = new double *[couche[layer] + 1]; // biais
+        for (int ln = 0; ln < couche[layer] + 1; ln++) {
+            w[layer][ln] = new double[couche[layer + 1]];
+            for (int rn = 0; rn < couche[layer + 1]; ++rn) {
+                w[layer][ln][rn] = ((double) rand()) / ((double) RAND_MAX) * 2.0 - 1.0;
             }
         }
     }
+
     return w;
 }
 
-void deleteMlpModel(double ***w, int width) {
-    for (int i = 0; i < width; i++) {
+void deleteMlpModel(double ***w,int couche[], int width) {
+    for (int i = 0; i < width -1; i++) {
+        for (int j = 0; j < couche[i] + 1; j++) {
+            delete[] w[i][j];
+        }
         delete[] w[i];
     }
     delete[] w;
@@ -109,21 +113,16 @@ void trainMlpModel(double ***w, double input[], double result[], int couche[], i
     }
     delete[] x;
     delete[] y;
-
-
 }
 
 
-double predictMlpModel(double ***w, double input[], int couche[], int width, double param[]) {
-    int count = 0;
+int predictMlpModel(double ***w, double input[], int couche[], int width, double param[]) {
     double **x = new double *[1];
     x[0] = new double[couche[0]];
     for (int j = 0; j < couche[0]; j++) {
         x[0][j] = input[j];
     }
-    double value = dllPredictMlp(w, x, couche, width, param);
-
-
+    int value = dllPredictMlp(w, x, couche, width, param);
     delete[] x[0];
     delete[] x;
 
