@@ -8,7 +8,10 @@
 
 extern "C" {
 
-/////////////////////// LP
+////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////// Linear perceptron /////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 double *createLinearModel(int size) {
     double *w = new double[size];
@@ -19,7 +22,7 @@ void deleteLinearModel(double *w) {
     delete w;
 }
 
-
+// Transform array on matrix
 void trainLinearModel(double *w, double input[], double result[], double param[]) {
 
     MatrixXd xMat((int) param[6], (int) param[3] + 1);
@@ -38,6 +41,7 @@ void trainLinearModel(double *w, double input[], double result[], double param[]
     dllTrainLinearModel(w, xMat, resultMat, param);
 }
 
+// Transform array on matrix
 int predictLinearModel(double *w, double input[], double param[]) {
 
     VectorXd xp((int) param[3] + 1);
@@ -54,8 +58,46 @@ int predictLinearModel(double *w, double input[], double param[]) {
 
 }
 
+// Transform array on matrix
+void trainLinearModelRl(double *w, double input[], double result[], double param[]) {
+    MatrixXd xMat((int) param[6], (int) param[3] + 1);
+    MatrixXd resultMat((int) param[6], 1);
+    int tmp = 0;
+    for (int i = 0; i < (int) param[6]; i++) {
+        xMat.row(i).col(0) << 1;
+        for (int k = 0; k < (int) param[3]; k++) {
+            xMat.row(i).col(k + 1) << input[tmp + k];
+        }
+        resultMat.row(i).col(0) << result[i];
+        tmp += (int) param[3];
+    }
 
-////////////////////// MLP
+
+    dllTrainLinearModelRl(w, xMat, resultMat, param);
+}
+
+// Transform array on matrix
+double predictLinearModelRl(double *w, double input[], double param[]) {
+
+    VectorXd xp((int) param[3] + 1);
+    VectorXd wp((int) param[3] + 1);
+    xp(0) = 1;
+    wp(0) = w[0];
+    for (int i = 1; i < (int) param[3] + 1; i++) {
+        xp(i) = input[i - 1];
+        wp(i) = w[i];
+    }
+
+
+    return dllPredictLinearModelRl(wp, xp, param);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////// Multi layer perceptron  ///////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 double ***createMlpModel(int couche[], int width) {
     double ***w;
@@ -116,13 +158,13 @@ void trainMlpModel(double ***w, double input[], double result[], int couche[], i
 }
 
 
-int predictMlpModel(double ***w, double input[], int couche[], int width, double param[]) {
+double predictMlpModel(double ***w, double input[], int couche[], int width, double param[]) {
     double **x = new double *[1];
     x[0] = new double[couche[0]];
     for (int j = 0; j < couche[0]; j++) {
         x[0][j] = input[j];
     }
-    int value = dllPredictMlp(w, x, couche, width, param);
+    double value = dllPredictMlp(w, x, couche, width, param);
     delete[] x[0];
     delete[] x;
 

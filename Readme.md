@@ -6,6 +6,7 @@ itou pour les fichiers c++
 
 Mon CMake :
 
+```
 cmake_minimum_required(VERSION 3.10)
 project(cpp2PA)
 
@@ -19,19 +20,32 @@ add_library(cpp2PA SHARED
         MultiLayerPerceptron/MultiLayerPerceptron.cpp
         MultiLayerPerceptron/MultiLayerPerceptron.h
         )
+```
 
-Linéaire :
+**Linéaire** :
 
-Classification : OK
+* Classification : OK
 
-Rég Linéaire : NOK
+* Rég Linéaire : OK
 
-Changement de dimension : OK
+* Changement de dimension : OK
 
 
-MLP :
+**MLP** :
 
-NOK
+* Classification : OK
+
+* Rég : OK
+
+**RBF Naif** :
+
+* **NOK**
+
+**RBF** : 
+
+* **NOK**
+
+
 
 
 

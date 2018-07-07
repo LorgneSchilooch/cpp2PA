@@ -31,6 +31,7 @@ void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], int wid
             }
             xu[0][couche[0]] = 1;
 
+            // propagation
             for (int layer = 1; layer < width; ++layer) {
                 for (int h = 0; h < couche[layer] + 1; ++h) {
                     double sum = 0;
@@ -40,14 +41,15 @@ void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], int wid
                     if (h == couche[layer]) {
                         xu[layer][h] = 1;
                     } else {
-                        xu[layer][h] = tanh(sum);
+                        if (param[8] == 1) xu[layer][h] = tanh(sum);
+                        else xu[layer][h] = (layer == width -1) ? sum : tanh(sum);
                     }
                 }
             }
 
             // retropopagation
             for (int j = 0; j < couche[width - 1]; ++j) {
-                delta[width - 1][j] = (1 - (xu[width - 1][j] * xu[width - 1][j])) * (xu[width - 1][j] - y[i][j]);
+                delta[width - 1][j] = (param[8] == 1) ? (1 - (xu[width - 1][j] * xu[width - 1][j])) * (xu[width - 1][j] - y[i][j]) : (xu[width - 1][j] - y[i][j]);
             }
 
             for (int l = width - 1; l > 0; --l) {
@@ -60,6 +62,7 @@ void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], int wid
                 }
             }
 
+            // new w
             for (int l = 1; l < width; ++l) {
                 for (int ln = 0; ln < couche[l - 1] + 1; ++ln) {
                     for (int rn = 0; rn < couche[l]; ++rn) {
@@ -80,7 +83,7 @@ void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], int wid
 }
 
 
-int dllPredictMlp(double ***w, double **x, int couche[], int width, double param[]) {
+double dllPredictMlp(double ***w, double **x, int couche[], int width, double param[]) {
     double **xu = new double *[width];
     for (int j = 0; j < width; j++) {
         xu[j] = new double[couche[j] + 1];
@@ -95,9 +98,6 @@ int dllPredictMlp(double ***w, double **x, int couche[], int width, double param
     xu[0][couche[0]] = 1;
 
     //propagation
-
-
-
     for (int j = 1; j < width; ++j) {
         for (int h = 0; h < couche[j] + 1; h++) {
             double sum = 0;
@@ -107,18 +107,27 @@ int dllPredictMlp(double ***w, double **x, int couche[], int width, double param
             if (h == couche[j]) {
                 xu[j][h] = 1;
             } else {
-                xu[j][h] = tanh(sum);
+                if (param[8] == 1) xu[j][h] = tanh(sum);
+                else xu[j][h] = (j == width -1) ? sum : tanh(sum);
             }
         }
     }
 
-    int index = -999;
+    double value = -999;
+if (param[8] == 1) {
     for (int i = 0; i < couche[width - 1]; i++) {
 
         if (xu[width - 1][i] > 0) {
-            index = i;
+            value = i;
         }
     }
+} else {
+value = 0;
+for (int i = 0; i< couche[width -1]; i++) {
+    value += xu[width -1][i];
+}
+}
+
 
     //delete
     for (int z = 0; z < width; z++) {
@@ -126,7 +135,9 @@ int dllPredictMlp(double ***w, double **x, int couche[], int width, double param
     }
     delete[] xu;
 
-    return index;
+    return value;
 
 }
+
+
 

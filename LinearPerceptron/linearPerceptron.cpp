@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+// Classification
 void dllTrainLinearModel(double *w, MatrixXd x, MatrixXd result, double param[]) {
     VectorXd wResult((int)param[3] + 1);
     wResult(0) = param[2];
@@ -54,4 +54,22 @@ int dllPredictLinearModel(VectorXd w, VectorXd x, double param[]) {
         tmp += (w(i) * x(i));
     }
     return (tmp < 0) ? -1 : 1;
+};
+
+void dllTrainLinearModelRl(double *w, MatrixXd input, MatrixXd output, double param[]) {
+
+    MatrixXd we = ((input.transpose()*input).ldlt().solve(input.transpose()))*output; //Merci Pierre
+
+    for (int i = 0; i < (int)param[3] + 1; i ++) {
+        w[i] = we(i);
+    }
+
+}
+
+double dllPredictLinearModelRl(VectorXd w, VectorXd x, double param[]) {
+    double tmp = 0.;
+    for (int i = 0; i < param[3] + 1; i++) {
+        tmp += (w(i) * x(i));
+    }
+    return tmp;
 };
