@@ -6,7 +6,7 @@
 #define CPP2PA_SIMPLEPERCEPTRON_H
 
 
-#include "../Eigen/Dense"
+#include "../../Eigen/Dense"
 
 using namespace Eigen;
 using namespace std;

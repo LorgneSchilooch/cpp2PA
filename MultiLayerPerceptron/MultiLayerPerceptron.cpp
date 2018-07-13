@@ -6,8 +6,10 @@
 #include <cmath>
 #include <vector>
 #include <math.h>
-#include "MultiLayerPerceptron.h"
 #include <algorithm>
+#include <fstream>
+#include "h/MultiLayerPerceptron.h"
+
 
 
 void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], int width, double param[]) {
@@ -122,12 +124,8 @@ if (param[8] == 1) {
         }
     }
 } else {
-value = 0;
-for (int i = 0; i< couche[width -1]; i++) {
-    value += xu[width -1][i];
+value = xu[width - 1][0];
 }
-}
-
 
     //delete
     for (int z = 0; z < width; z++) {
