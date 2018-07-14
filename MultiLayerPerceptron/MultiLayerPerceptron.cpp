@@ -80,7 +80,6 @@ void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], double 
     }
 }
 
-
 double dllPredictMlp(double ***w, double **x, int couche[], double param[]) {
     bool classification = (param[8] == 1);
     int width = (int) param[7];
@@ -122,7 +121,6 @@ double dllPredictMlp(double ***w, double **x, int couche[], double param[]) {
         }
     } else value = xu[width - 1][0];
 
-
     //delete
     for (int z = 0; z < width; z++) {
         delete[] xu[z];
@@ -130,8 +128,4 @@ double dllPredictMlp(double ***w, double **x, int couche[], double param[]) {
     delete[] xu;
 
     return value;
-
 }
-
-
-

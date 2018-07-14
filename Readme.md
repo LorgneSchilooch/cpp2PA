@@ -13,37 +13,47 @@ project(cpp2PA)
 set(CMAKE_CXX_STANDARD 11)
 
 add_library(cpp2PA SHARED
-        library.cpp
-        library.h
         LinearPerceptron/linearPerceptron.cpp
-        LinearPerceptron/linearPerceptron.h
+        LinearPerceptron/h/linearPerceptron.h
         MultiLayerPerceptron/MultiLayerPerceptron.cpp
-        MultiLayerPerceptron/MultiLayerPerceptron.h
+        MultiLayerPerceptron/h/MultiLayerPerceptron.h
+        LinearPerceptron/interfaceWithCpp.cpp
+        LinearPerceptron/h/interfaceWithCpp.h
+        MultiLayerPerceptron/interfaceWithCpp.cpp
+        MultiLayerPerceptron/h/interfaceWithCpp.h
+        #RBF/InterfaceWithCpp.cpp
+        #RBF/h/InterfaceWithCpp.h
+        RBF/RBF.cpp
+        RBF/h/RBF.h
         )
 ```
 
 **Linéaire** :
 
-* Classification : OK
+* Classification : **OK**
 
-* Rég Linéaire : OK
+* Rég Linéaire : **OK**
 
-* Changement de dimension : OK
+* Changement de dimension : **OK**
 
 
 **MLP** :
 
-* Classification : OK
+* Classification : **OK**
 
-* Régression : OK
+* Régression : **OK**
 
 **RBF Naif** :
 
-* Classification : OK
+* Classification : **OK**
 
-* Régression : OK
+* Régression : **OK**
 
 **RBF** : 
+
+* **NOK**
+
+**Fonction de vérifications des arguments**
 
 * **NOK**
 

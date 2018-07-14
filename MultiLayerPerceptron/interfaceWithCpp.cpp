@@ -1,7 +1,3 @@
-//
-// Created by Qut on 13/07/2018.
-//
-
 #include "h/interfaceWithCpp.h"
 
 extern "C" {
@@ -81,7 +77,6 @@ double predictMlpModel(double ***w, double input[], int couche[], double param[]
     delete[] x;
 
     return value;
-
 }
 
 }
