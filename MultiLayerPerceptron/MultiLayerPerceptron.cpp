@@ -12,7 +12,8 @@
 
 
 
-void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], int width, double param[]) {
+void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], double param[]) {
+    int width = (int)param[7];
     for (int v = 0; v < param[1]; v++) { // epoch
         for (int i = 0; i < param[6]; i++) {// parcours train
             // preparation X & delta
@@ -85,7 +86,8 @@ void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], int wid
 }
 
 
-double dllPredictMlp(double ***w, double **x, int couche[], int width, double param[]) {
+double dllPredictMlp(double ***w, double **x, int couche[], double param[]) {
+    int width = (int)param[7];
     double **xu = new double *[width];
     for (int j = 0; j < width; j++) {
         xu[j] = new double[couche[j] + 1];

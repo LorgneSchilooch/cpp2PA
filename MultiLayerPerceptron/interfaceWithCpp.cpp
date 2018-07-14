@@ -41,8 +41,8 @@ void deleteMlpModel(double ***w, int couche[], int width) {
     delete[] w;
 }
 
-void trainMlpModel(double ***w, double input[], double result[], int couche[], int width, int maxHeight, double param[]) {
-
+void trainMlpModel(double ***w, double input[], double result[], int couche[], double param[]) {
+    int width = (int)param[7];
     int count = 0;
     double **x = new double *[(int) param[6]];
     for (int i = 0; i < ((int) param[6]); i++) {
@@ -63,7 +63,7 @@ void trainMlpModel(double ***w, double input[], double result[], int couche[], i
         count += couche[width - 1];
     }
 
-    dllTrainMlpModel(w, x, y, couche, width, param);
+    dllTrainMlpModel(w, x, y, couche, param);
 
     for (int i = 0; i < ((int) param[6]); i++) {
         delete[] x[i];
@@ -74,13 +74,13 @@ void trainMlpModel(double ***w, double input[], double result[], int couche[], i
 }
 
 
-double predictMlpModel(double ***w, double input[], int couche[], int width, double param[]) {
+double predictMlpModel(double ***w, double input[], int couche[], double param[]) {
     double **x = new double *[1];
     x[0] = new double[couche[0]];
     for (int j = 0; j < couche[0]; j++) {
         x[0][j] = input[j];
     }
-    double value = dllPredictMlp(w, x, couche, width, param);
+    double value = dllPredictMlp(w, x, couche,  param);
     delete[] x[0];
     delete[] x;
 
