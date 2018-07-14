@@ -35,11 +35,13 @@ add_library(cpp2PA SHARED
 
 * Classification : OK
 
-* Rég : OK
+* Régression : OK
 
 **RBF Naif** :
 
-* **NOK**
+* Classification : OK
+
+* Régression : OK
 
 **RBF** : 
 
