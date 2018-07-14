@@ -22,7 +22,7 @@ void deleteNaiveRbfModel(double *w) {
 
 void trainNaiveRbfModel(double *w, double input[], double result[], double param[]) {
     int sizeTrain = (int) param[6];
-    double gamma = (int) param[9];
+    double gamma = param[9];
     int NumberInput = param[3];
     double distance;
     VectorXd wResult;
@@ -47,7 +47,7 @@ void trainNaiveRbfModel(double *w, double input[], double result[], double param
 
 double predictNaiveRbf(double *w, double input[], double inputs[], double param[]) {
     int sizeTrain = (int) param[6];
-    double gamma = (int) param[9];
+    double gamma = param[9];
     int NumberInput = param[3];
     bool classification = (param[8] == 1);
     double sum = 0;
