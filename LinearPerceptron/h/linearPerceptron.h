@@ -1,7 +1,3 @@
-//
-// Created by Qut on 17/06/2018.
-//
-
 #ifndef CPP2PA_SIMPLEPERCEPTRON_H
 #define CPP2PA_SIMPLEPERCEPTRON_H
 
