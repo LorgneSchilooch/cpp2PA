@@ -1,7 +1,3 @@
-//
-// Created by Qut on 17/06/2018.
-//
-
 #include <stdlib.h>
 #include <time.h>
 #include "h/linearPerceptron.h"

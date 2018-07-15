@@ -1,7 +1,3 @@
-//
-// Created by Manitra Ranaivoharison on 19/06/2018.
-
-
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -9,8 +5,6 @@
 #include <algorithm>
 #include <fstream>
 #include "h/MultiLayerPerceptron.h"
-
-
 
 void dllTrainMlpModel(double ***w, double **x, double **y, int couche[], double param[]) {
     int width = (int)param[7];
@@ -138,6 +132,3 @@ value = xu[width - 1][0];
     return value;
 
 }
-
-
-

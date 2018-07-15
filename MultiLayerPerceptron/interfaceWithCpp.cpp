@@ -1,7 +1,3 @@
-//
-// Created by Qut on 13/07/2018.
-//
-
 #include "h/interfaceWithCpp.h"
 
 extern "C" {
